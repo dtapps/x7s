@@ -1,5 +1,5 @@
 <h1>
-<a href="https://www.dtapp.net/">Golang x7s</a>
+<a href="https://www.dtapp.net/">Golang</a>
 </h1>
 
 📦 Golang x7s
@@ -13,5 +13,5 @@
 #### 安装
 
 ```shell
-go get -v -u go.dtapp.net/x7s@v1.0.0
+go get -v -u go.dtapp.net/x7s@v1.0.1
 ```
