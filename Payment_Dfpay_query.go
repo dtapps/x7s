@@ -2,7 +2,6 @@ package x7s
 
 import (
 	"context"
-	"go.dtapp.net/gojson"
 	"go.dtapp.net/gorequest"
 )
 
@@ -32,17 +31,20 @@ func newPaymentDfpayQueryResult(result PaymentDfpayQueryResponse, body []byte, h
 // PaymentDfpayQuery 核销查询接口
 // https://gys.x7s.com/Home_Index_documenta.html#doc8
 func (c *Client) PaymentDfpayQuery(ctx context.Context, partnerOrderNo string, notMustParams ...gorequest.Params) (*PaymentDfpayQueryResult, error) {
+
+	// OpenTelemetry链路追踪
+	ctx = c.TraceStartSpan(ctx, "Payment_Dfpay_query")
+	defer c.TraceEndSpan()
+
 	// 参数
 	params := gorequest.NewParamsWith(notMustParams...)
 	params.Set("partner_id", c.GetPartnerID())     // 供应商ID
 	params.Set("partner_order_no", partnerOrderNo) // 供应商订单号
-	// 请求
-	request, err := c.request(ctx, c.GetApiURL()+"Payment_Dfpay_query", params)
-	if err != nil {
-		return newPaymentDfpayQueryResult(PaymentDfpayQueryResponse{}, request.ResponseBody, request), err
-	}
-	// 定义
+
+	// 响应
 	var response PaymentDfpayQueryResponse
-	err = gojson.Unmarshal(request.ResponseBody, &response)
+
+	// 请求
+	request, err := c.request(ctx, "Payment_Dfpay_query", params, &response)
 	return newPaymentDfpayQueryResult(response, request.ResponseBody, request), err
 }

@@ -2,7 +2,8 @@ package x7s
 
 import (
 	"errors"
-	"go.dtapp.net/golog"
+	"go.dtapp.net/gorequest"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // ClientConfig 实例配置
@@ -19,24 +20,26 @@ type Client struct {
 		partnerID int64  // 平台分配商户号
 		apiKey    string // 渠道分配的密钥
 	}
-	gormLog struct {
-		status bool           // 状态
-		client *golog.ApiGorm // 日志服务
-	}
+	httpClient *gorequest.App // HTTP请求客户端
+	clientIP   string         // 客户端IP
+	trace      bool           // OpenTelemetry链路追踪
+	span       trace.Span     // OpenTelemetry链路追踪
 }
 
 // NewClient 创建实例化
 func NewClient(config *ClientConfig) (*Client, error) {
-
 	c := &Client{}
-
-	c.config.apiURL = config.ApiURL
-	c.config.partnerID = config.PartnerID
-	c.config.apiKey = config.ApiKey
 
 	if c.config.apiURL == "" {
 		return nil, errors.New("需要配置ApiURL")
 	}
 
+	c.httpClient = gorequest.NewHttp()
+
+	c.config.apiURL = config.ApiURL
+	c.config.partnerID = config.PartnerID
+	c.config.apiKey = config.ApiKey
+
+	c.trace = true
 	return c, nil
 }
