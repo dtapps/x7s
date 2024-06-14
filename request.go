@@ -11,14 +11,14 @@ import (
 // 请求接口
 func (c *Client) request(ctx context.Context, url string, param gorequest.Params, response any) (gorequest.Response, error) {
 
-	// 签名
-	param.Set("sign", c.sign(param))
-
 	// 请求地址
 	uri := c.GetApiURL() + url
 
+	// 签名
+	param.Set("sign", c.sign(param))
+
 	// 设置请求地址
-	c.httpClient.SetUri(url)
+	c.httpClient.SetUri(uri)
 
 	// 设置FORM格式
 	c.httpClient.SetContentTypeForm()
